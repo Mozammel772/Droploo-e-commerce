@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-orange-50 mt-10">
-      <div className="footer max-w-7xl mx-auto px-5 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-base-content ">
+      <div className="footer max-w-[1400px] mx-auto px-5 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-base-content ">
         {/* Logo & Contact Info */}
         <div>
             <h1>E-Commerce</h1>

@@ -1,6 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
+import CartDetails from "../components/AddtoCard/CardDetails";
+import CheckoutPage from "../components/AddtoCard/CheckoutPage";
 import Error from "../components/ErrorPages/Error";
 import MainLayout from "../layout/MainLayout";
+import DiscountProducts from "../Pages/DiscountProductsPages/DiscountProducts";
 import Home from "../Pages/HomePages/Home/Home";
 import ArrivalProductsDetails from "../Pages/HomePages/NewArrivalProducts/ArrivalProductsDetails";
 import TopCategories from "../Pages/HomePages/TopCategory/TopCategory";
@@ -41,6 +44,18 @@ export const routes = createBrowserRouter([
       {
         path: "/products-collection/details/:slug",
         element: <ShopDetails />,
+      },
+      {
+        path:"/products-collection/discount-products",
+       element:<DiscountProducts/>
+      },
+      {
+        path: "cart-details",
+        element: <CartDetails />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
       },
     ],
   },

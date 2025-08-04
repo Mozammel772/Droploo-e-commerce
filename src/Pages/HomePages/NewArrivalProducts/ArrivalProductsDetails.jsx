@@ -41,7 +41,7 @@
 //   if (error) return <p className="p-10 text-center">Failed to load product.</p>;
 
 //   return (
-//     <div className="max-w-7xl mx-auto p-4 md:p-10">
+//     <div className="max-w-[1400px] mx-auto p-4 md:p-10">
 //       <div className="flex flex-col md:flex-row gap-8">
 //         {/* Image */}
 //         <div className="md:w-1/2 space-y-4">
@@ -179,7 +179,7 @@ const ArrivalProductsDetails = () => {
   };
 
   if (isLoading) return (
-    <div className="max-w-7xl mx-auto p-10">
+    <div className="max-w-[1400px] mx-auto p-10">
       <div className="flex flex-col md:flex-row gap-8 animate-pulse">
         <div className="md:w-1/2 h-96 bg-gray-200 rounded"></div>
         <div className="md:w-1/2 space-y-4">
@@ -192,7 +192,7 @@ const ArrivalProductsDetails = () => {
   );
 
   if (error) return (
-    <div className="max-w-7xl mx-auto p-10 text-center">
+    <div className="max-w-[1400px] mx-auto p-10 text-center">
       <p className="text-red-500 mb-4">Product not found</p>
       <Link 
         to="/products" 
@@ -204,7 +204,7 @@ const ArrivalProductsDetails = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-10">
+    <div className="max-w-[1400px] mx-auto p-4 md:p-10">
       <Link 
         to="/products" 
         className="inline-flex items-center mb-6 text-teal-600 hover:text-teal-800"

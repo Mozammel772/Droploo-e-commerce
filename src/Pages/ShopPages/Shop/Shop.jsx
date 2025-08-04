@@ -177,7 +177,7 @@ const Shop = () => {
       : categories;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
       {/* Sort Controls */}
       <div className="flex justify-between items-center mb-6 border-b pb-4">
         <div className="flex items-center gap-2">
@@ -208,7 +208,7 @@ const Shop = () => {
       {/* Category & Subcategory Buttons */}
 
       {isLoadingCategories ? (
-        <div className="max-w-7xl mx-auto flex flex-wrap gap-3 mb-6">
+        <div className="max-w-[1400px] mx-auto flex flex-wrap gap-3 mb-6">
           {[...Array(9)].map((_, i) => (
             <div
               key={i}
@@ -222,7 +222,7 @@ const Shop = () => {
           <Link
             to={"/products-collection"}
             onClick={handleAllClick}
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`px-4 py-2 rounded-md text-sm md:text-base font-medium ${
               !selectedCategory && !selectedSubcategory
                 ? "bg-teal-600 text-white"
                 : "bg-gray-200 hover:bg-gray-300"
@@ -232,11 +232,11 @@ const Shop = () => {
           </Link>
 
           {displayCategories.map((category) => (
-            <div key={category.slug} className="flex items-center gap-2">
+            <div key={category.slug} className="flex items-center gap-2 ">
               <Link
                 to={`/products-collection/${category.slug}`}
                 onClick={() => handleCategoryClick(category.slug)}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                className={`px-4 py-2 rounded-md text-sm md:text-base font-medium ${
                   selectedCategory === category.slug && !selectedSubcategory
                     ? "bg-teal-600 text-white"
                     : "bg-gray-200 hover:bg-gray-300"
@@ -396,7 +396,7 @@ const ProductCard = ({ product }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white border rounded-md shadow hover:shadow-2xl hover:border-teal-300 transition duration-200 overflow-hidden"
+      className="bg-white border border-gray-300 rounded-md shadow hover:shadow-2xl hover:border-teal-600 transition duration-200 overflow-hidden"
     >
       <div className="relative">
         <Link to={`/products-collection/details/${product.slug}`}>
@@ -408,26 +408,26 @@ const ProductCard = ({ product }) => {
           />
         </Link>
 
-        <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+        <span className="absolute top-2 right-2 bg-blue-700 text-white text-sm px-2 py-1 rounded-full">
           {product.product_type}
         </span>
       </div>
       <div className="p-3">
-        <h2 className="text-sm font-semibold text-gray-800 truncate">
+        <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">
           {product.name}
         </h2>
-        <div className="text-yellow-500 text-sm mt-1">
+        <div className="text-yellow-500 text-sm md:text-base mt-1">
           {"★".repeat(rating) + "☆".repeat(5 - rating)}
         </div>
-        <div className="mt-1 text-sm">
+        <div className="mt-1 text-sm md:text-lg">
           <span className="text-green-600 font-semibold mr-2">৳{price}</span>
           {oldPrice && (
             <span className="line-through text-gray-400">৳{oldPrice}</span>
           )}
         </div>
         <Link
-          to={`/products-collection/${product.slug}`}
-          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-1 rounded"
+          to={`/checkout`}
+          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-1 md:py-1.5 rounded"
         >
          Order Now
         </Link>

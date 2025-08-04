@@ -9,9 +9,10 @@ import {
   FaSearch,
   FaShoppingCart,
   FaTimes,
+  FaTrash,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import { useCart } from "../../Context/CartContext/CartContext";
 
 const dropdownVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -31,6 +32,17 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [subcategoryView, setSubcategoryView] = useState(false);
   const [currentCat, setCurrentCat] = useState(null);
+  const { cartItems, setCartItems } = useCart();
+  const [showCart, setShowCart] = useState(false);
+
+  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  const deleteCartItem = (index) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    setCartItems(updatedCart);
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+  };
 
   useEffect(() => {
     fetch("https://backend.droploo.com/api/categories")
@@ -56,7 +68,7 @@ const Navbar = () => {
   return (
     <div className="w-full shadow-md">
       {/* Top bar and search UI */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2 text-xl font-bold text-teal-700">
             {/* <img src={logo} alt="Logo" className="w-10" /> */}
@@ -70,10 +82,18 @@ const Navbar = () => {
               <FaSearch className="text-xl text-gray-600" />
             </button>
             <div className="relative cursor-pointer">
-              <FaShoppingCart className="text-2xl text-teal-700" />
-              <span className="badge badge-success badge-sm absolute -top-2 -right-2">
-                2
-              </span>
+              <button
+                onClick={() => setShowCart((prev) => !prev)}
+                className="relative"
+                aria-label="Cart"
+              >
+                <FaShoppingCart size={24} />
+                {totalQuantity > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 rounded-full px-2 text-xs font-bold">
+                    {totalQuantity}
+                  </span>
+                )}
+              </button>
             </div>
             <button
               onClick={() => setMenuOpen(true)}
@@ -101,16 +121,96 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      {/* Cart Content */}
+      {showCart && (
+        <div className="fixed top-0 bottom-0 right-0 w-80 bg-white text-black shadow-lg z-50 flex flex-col">
+          {/* Cart Header */}
+          <div className="flex justify-between items-center border-b p-4">
+            <h3 className="font-semibold">Cart Items</h3>
+            <button
+              className="text-lg font-bold hover:text-red-600"
+              onClick={() => setShowCart(false)}
+            >
+              X
+            </button>
+          </div>
 
+          {/* Cart Items List */}
+          {cartItems.length === 0 ? (
+            <div className="p-4 overflow-auto flex-1">
+              <p>Cart is empty.</p>
+            </div>
+          ) : (
+            <>
+              <div className="p-4 overflow-auto flex-1">
+                <ul className="space-y-3">
+                  {cartItems.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-3 border-b pb-2 last:border-b-0 items-center"
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold">{item.name}</p>
+                        <p className="text-sm text-gray-700">
+                          Price: ৳{item.price} x {item.quantity} ={" "}
+                          <span className="font-bold">
+                            ৳{item.price * item.quantity}
+                          </span>
+                        </p>
+                      </div>
+                      <button
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => deleteCartItem(i)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Bottom Sticky Buttons */}
+
+              <div className="p-4 border-t bg-white sticky bottom-0">
+                <div className="flex justify-between gap-2">
+                  <Link
+                    onClick={() => {
+                      setShowCart(false);
+                    }}
+                    to="/cart-details"
+                    className="flex-1 text-center bg-teal-600 text-white font-semibold py-2 rounded hover:bg-teal-700"
+                  >
+                    Details
+                  </Link>
+                  <Link
+                    onClick={() => {
+                      setShowCart(false);
+                    }}
+                    to="/checkout"
+                    className="flex-1 text-center bg-teal-600 text-white font-semibold py-2 rounded hover:bg-teal-700"
+                  >
+                    Checkout
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
       {/* Desktop nav */}
       <div className="hidden md:flex bg-teal-600 text-white w-full">
-        <div className="max-w-7xl mx-auto flex items-center space-x-6 py-2 px-4 w-full">
+        <div className="max-w-[1400px] mx-auto flex items-center space-x-6 py-2 px-4 w-full">
           <div
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
             className="relative"
           >
-            <button className="flex items-center gap-2 bg-teal-700 hover:bg-teal-800 px-4 py-2 rounded">
+            <button className="flex items-center gap-2 bg-teal-700 hover:bg-teal-800 px-4 py-2 rounded cursor-pointer">
               Categories <FaAngleDown />
             </button>
             <AnimatePresence>
@@ -122,7 +222,7 @@ const Navbar = () => {
                   exit="exit"
                   className="absolute top-full left-0 z-50 mt-2 bg-white text-black shadow-xl rounded-md border flex gap-2"
                 >
-                  <ul className="w-56 max-h-96 overflow-y-auto border border-teal-500 p-2 rounded-md -mt-1 space-y-1">
+                  <ul className="w-56 max-h-96 overflow-y-auto border border-teal-500 p-2 rounded-md -mt-1 space-y-1 cursor-pointer">
                     {cats.map((c) => (
                       <li
                         key={c.id}
@@ -173,7 +273,7 @@ const Navbar = () => {
           <Link to="/products-collection" className="hover:underline">
             Shop
           </Link>
-          <Link to="/offer-products" className="hover:underline">
+          <Link to="/products-collection/discount-products" className="hover:underline">
             Offer Products
           </Link>
           <Link to="/return-process" className="hover:underline">
@@ -212,7 +312,7 @@ const Navbar = () => {
                     </Link>
                     <Link
                       to="/products-collection"
-                      className="block px-3 py-2 font-medium bg-gray-100 rounded hover:bg-teal-100"
+                      className="block px-3 py-2 font-medium bg-gray-100 rounded hover:bg-teal-100 cursor-pointer"
                     >
                       Products
                     </Link>
@@ -220,7 +320,7 @@ const Navbar = () => {
                       <button
                         key={c.id}
                         onClick={() => openSub(c)}
-                        className="w-full flex justify-between items-center px-3 py-3 bg-gray-100 rounded hover:bg-teal-100 text-gray-700 font-semibold"
+                        className="w-full flex justify-between items-center px-3 py-3 bg-gray-100 rounded hover:bg-teal-100 text-gray-700 font-semibold cursor-pointer"
                       >
                         <span>{c.name}</span>
                         {c.subcategories && c.subcategories.length > 0 && (
@@ -230,7 +330,7 @@ const Navbar = () => {
                     ))}
                     <Link
                       to="/about"
-                      className="block px-3 py-2 font-medium bg-gray-100 rounded hover:bg-teal-100"
+                      className="block px-3 py-2 font-medium bg-gray-100 rounded hover:bg-teal-100 cursor-pointer"
                     >
                       About
                     </Link>
@@ -239,7 +339,7 @@ const Navbar = () => {
                   <>
                     <button
                       onClick={() => setSubcategoryView(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-teal-600 "
+                      className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-teal-600  cursor-pointer"
                     >
                       <FaAngleLeft /> Back
                     </button>
@@ -248,7 +348,7 @@ const Navbar = () => {
                     <Link
                       to={`/products-collection/${currentCat.slug}`}
                       onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 bg-teal-50 text-teal-700 font-semibold  tracking-wide rounded hover:bg-teal-100"
+                      className="block px-4 py-2 bg-teal-50 text-teal-700 font-semibold  tracking-wide rounded hover:bg-teal-100 cursor-pointer"
                     >
                       {currentCat.name}
                     </Link>

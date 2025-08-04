@@ -53,7 +53,7 @@ const Banner = () => {
     );
 
   return (
-    <div className="max-w-7xl mx-auto relative">
+    <div className="max-w-[1400px] mx-auto relative">
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4">
           {[...Array(1)].map((_, i) => (
