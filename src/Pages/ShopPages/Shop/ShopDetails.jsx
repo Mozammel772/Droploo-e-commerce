@@ -315,7 +315,7 @@ const ShopDetails = () => {
                   to={`/products-collection/details/${item.slug}`}
                   className="block text-center bg-teal-600 text-white text-sm py-1 rounded hover:bg-teal-700"
                 >
-                  বিস্তারিত দেখুন
+                  Order Now
                 </Link>
               </div>
             ))}

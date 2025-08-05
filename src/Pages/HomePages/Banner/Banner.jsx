@@ -19,6 +19,7 @@ const Banner = () => {
     data: banners = [],
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["homeBanners"],
     queryFn: fetchBanners,
@@ -49,11 +50,31 @@ const Banner = () => {
 
   if (isError)
     return (
-      <p className="text-center text-red-500 py-10">Failed to load banners</p>
+      <div className="min-h-[10vh] flex items-center justify-center px-4 py-6">
+        <div className="bg-green-200 border border-gray-200  p-4 sm:p-6 rounded-xl text-center w-full max-w-xs md:max-w-md mx-auto">
+          <AlertCircle
+            size={32}
+            className="text-red-600 mx-auto mb-3 sm:mb-4 sm:size-10"
+          />
+          <h2 className="text-lg sm:text-xl text-red-500 mb-2">
+            Unable to Load Banner
+          </h2>
+          <p className="text-sm sm:text-base text-black mb-4 sm:mb-6 break-words">
+            {String(isError)}
+          </p>
+          <button
+            onClick={refetch}
+            className="flex items-center justify-center gap-2 mx-auto px-4 py-2 sm:px-6 sm:py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm sm:text-base"
+          >
+            <RefreshCw size={16} className="shrink-0" />
+            Try Again
+          </button>
+        </div>
+      </div>
     );
 
   return (
-    <div className="max-w-[1400px] mx-auto relative">
+    <div className="max-w-[1400px] mx-auto relative p-2">
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4">
           {[...Array(1)].map((_, i) => (
@@ -83,13 +104,13 @@ const Banner = () => {
               <img
                 src={banner.imageUrl}
                 alt={`Banner ${i + 1}`}
-                className="w-full h-[200px] md:h-[300px] lg:h-[400px] object-cover rounded-lg"
+                className="w-full h-[200px] md:h-[300px] lg:h-[400px]  rounded-lg"
               />
             </SwiperSlide>
           ))}
 
           {/* ⏱ Countdown Timer in Bottom Right */}
-          <div className="absolute right-5 bottom-14 bg-indigo-900 bg-opacity-100 text-white text-base p-3 px-4 rounded-full z-10">
+          <div className="absolute right-5 bottom-14 bg-teal-700 bg-opacity-100 text-white text-base p-0.5 px-1.5 md:p-1 md:px-2 rounded-full z-10">
             {secondsLeft}s
           </div>
         </Swiper>
@@ -98,22 +119,53 @@ const Banner = () => {
       {/* 🟣 Custom Swiper Pagination Style */}
       <style>
         {`
-          .swiper-pagination {
-            margin-top: 20px;
-            position: static !important;
-            text-align: center;
-          }
-          .swiper-pagination-bullet {
-            width: 10px;
-            height: 10px;
-            background: #9ca3af;
-            opacity: 1;
-            transition: background 0.3s;
-          }
-          .swiper-pagination-bullet-active {
-            background: #3b82f6;
-          }
-        `}
+    .swiper-pagination {
+      margin-top: 20px;
+      position: static !important;
+      text-align: center;
+    }
+
+    /* 🔹 Default (Mobile First) */
+    .swiper-pagination-bullet {
+      width: 6px;
+      height: 6px;
+      background: #9ca3af;
+      opacity: 1;
+      transition: background 0.3s;
+    }
+    .swiper-pagination-bullet-active {
+      background: #3b82f6;
+    }
+
+    /* 🔹 Arrows - Mobile default (smaller) */
+    .swiper-button-prev,
+    .swiper-button-next {
+      width: 25px;
+      height: 25px;
+    }
+    .swiper-button-prev::after,
+    .swiper-button-next::after {
+      font-size: 16px;
+    }
+
+    /* 🔹 Desktop - Larger */
+    @media (min-width: 768px) {
+      .swiper-pagination-bullet {
+        width: 10px;
+        height: 10px;
+      }
+
+      .swiper-button-prev,
+      .swiper-button-next {
+        width: 44px;
+        height: 44px;
+      }
+      .swiper-button-prev::after,
+      .swiper-button-next::after {
+        font-size: 22px;
+      }
+    }
+  `}
       </style>
     </div>
   );

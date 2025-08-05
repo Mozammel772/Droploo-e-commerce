@@ -37,7 +37,7 @@ const TopCategories = () => {
     data: categories = [],
     isLoading,
     isError,
-    error,
+    refetch,
   } = useQuery({
     queryKey: ["topCategories"],
     queryFn: fetchCategories,
@@ -45,22 +45,41 @@ const TopCategories = () => {
   const handleCategoryClick = (slug) => {
     navigate(`/products-collection/${slug}`);
   };
+
   return (
-    <div className="max-w-[1400px] mx-auto px-4 py-10">
-      <h2 className="text-2xl font-bold mb-6">TOP CATEGORIES</h2>
+    <div className="max-w-[1400px] mx-auto p-2 md:py-5">
+      <h2 className="text-xl md:text-3xl font-bold mb-3 md:mb-5">TOP CATEGORIES</h2>
 
       {isError && (
-        <div className="text-red-500">
-          Failed to load categories: {error.message}
+        <div className="min-h-[10vh] flex items-center justify-center px-4 py-6">
+          <div className="bg-green-200 border border-gray-200  p-4 sm:p-6 rounded-xl text-center w-full max-w-xs md:max-w-md mx-auto">
+            <AlertCircle
+              size={32}
+              className="text-red-600 mx-auto mb-3 sm:mb-4 sm:size-10"
+            />
+            <h2 className="text-lg sm:text-xl text-red-500 mb-2">
+              Unable to Load Banner
+            </h2>
+            <p className="text-sm sm:text-base text-black mb-4 sm:mb-6 break-words">
+              {String(isError)}
+            </p>
+            <button
+              onClick={refetch}
+              className="flex items-center justify-center gap-2 mx-auto px-4 py-2 sm:px-6 sm:py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm sm:text-base"
+            >
+              <RefreshCw size={16} className="shrink-0" />
+              Try Again
+            </button>
+          </div>
         </div>
       )}
 
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="p-4 bg-white rounded-md shadow flex flex-col gap-4 animate-pulse"
+              className="p-4 bg-white rounded-md shadow flex flex-col  gap-4 animate-pulse"
             >
               <div className="skeleton h-40 w-full rounded bg-gray-200"></div>
               <div className="skeleton h-4 w-1/2 mx-auto bg-gray-200"></div>
@@ -69,17 +88,16 @@ const TopCategories = () => {
         </div>
       ) : (
         <Swiper
-          spaceBetween={20}
           autoplay={{
             delay: 2500,
             disableOnInteraction: false,
           }}
           breakpoints={{
-            320: { slidesPerView: 1.5 },
-            640: { slidesPerView: 2.5 },
-            768: { slidesPerView: 3.5 },
-            1024: { slidesPerView: 4.5 },
-            1280: { slidesPerView: 5.5 },
+            320: { slidesPerView: 2.5, spaceBetween: 5 },
+            640: { slidesPerView: 2.5, spaceBetween: 10 },
+            768: { slidesPerView: 3.5, spaceBetween: 12 },
+            1024: { slidesPerView: 4.5, spaceBetween: 16 },
+            1280: { slidesPerView: 5.5, spaceBetween: 20 },
           }}
           modules={[Autoplay]}
         >
@@ -87,13 +105,13 @@ const TopCategories = () => {
             <SwiperSlide key={category.id}>
               <div
                 onClick={() => handleCategoryClick(category.slug)}
-                className="bg-white rounded-md shadow transition-all duration-300 cursor-pointer p-4 text-center border hover:shadow-2xl hover:border-teal-600"
+                className="bg-white rounded-md shadow transition-all duration-300 cursor-pointer p-2 md:p-4 text-center border border-gray-200 hover:shadow-2xl hover:border-teal-600"
               >
                 {category.imageUrl ? (
                   <img
                     src={category.imageUrl}
                     alt={category.name}
-                    className="w-full h-40 object-contain mb-4 rounded"
+                    className="w-full h-24 md:h-40 object-contain mb-4 rounded"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "/images/fallback.jpg";
