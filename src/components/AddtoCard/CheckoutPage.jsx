@@ -151,7 +151,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="max-w-[1400px] mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Left - Shipping Info */}
       <div className="md:col-span-2 bg-white p-6 rounded shadow">
         <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
