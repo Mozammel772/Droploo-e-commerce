@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import InnerImageZoom from "react-inner-image-zoom";
@@ -64,9 +65,10 @@ const ShopDetails = () => {
 
   const product = data?.data?.product;
   const related = data?.data?.related || [];
-
+ console.log("related products",related)
   const mainDisplayImage = mainImage || product?.imageUrl;
   const price = product.discount_price || product.regular_price;
+
 
   const handleQuantityChange = (change) => {
     setQuantity((prev) => Math.max(1, Number(prev) + change));
@@ -151,7 +153,7 @@ const ShopDetails = () => {
         {/* Product Info */}
         <div className="md:w-1/2 space-y-4">
           <h1 className="text-xl md:text-3xl font-bold">{product.name}</h1>
-          <p className=" text-lg">
+          <p className="text-lg">
             Brand:{" "}
             <span className="font-semibold">{product.brand_id || "N/A"}</span>
           </p>
@@ -248,16 +250,16 @@ const ShopDetails = () => {
             </button>
           </div>
 
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-5 md:mt-12">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-semibold transition"
+              className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded font-semibold transition"
             >
               Add to Card
             </button>
             <button
               onClick={handleOrderNow}
-              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded font-semibold transition"
+              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition"
             >
               Order Now
             </button>
@@ -285,43 +287,72 @@ const ShopDetails = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="mt-4">
+        <div className="mt-7 md:mt-12">
           <TabContent tab={activeTab} product={product} />
         </div>
       </div>
 
-      {/* Related Products */}
-      {related.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-xl font-semibold mb-4">Related Products</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {related.map((item) => (
-              <div
-                key={item.id}
-                className="border rounded p-2 bg-white shadow hover:shadow-md"
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="w-full h-40 object-cover rounded mb-2"
-                />
-                <h3 className="text-sm font-medium mb-1 line-clamp-2">
-                  {item.name}
-                </h3>
-                <p className="text-teal-600 font-semibold text-sm mb-2">
-                  ৳ {item.regular_price}
-                </p>
-                <Link
-                  to={`/products-collection/details/${item.slug}`}
-                  className="block text-center bg-teal-600 text-white text-sm py-1 rounded hover:bg-teal-700"
-                >
-                  Order Now
-                </Link>
-              </div>
-            ))}
+    {/* Related Products */}
+{related.length > 0 && (
+  <div className="mt-12">
+    <h2 className="text-xl font-semibold mb-4">Related Products</h2>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {related.map((item, index) => (
+       
+        <motion.div
+          key={item.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05, duration: 0.3 }}
+          className="bg-white border border-gray-200 rounded-md shadow hover:shadow-2xl hover:border-teal-600 transition duration-200 overflow-hidden"
+        >
+          <div className="relative">
+            <Link to={`/products-collection/details/${item.slug}`}>
+              <img
+                src={item.imageUrl}
+                alt={item.name}
+                className="w-full h-28 md:h-52 object-cover cursor-pointer"
+                onError={(e) => (e.target.src = "/images/fallback.jpg")}
+              />
+            </Link>
+            {item.product_type && (
+              <span className="absolute top-2 right-2 bg-orange-700 text-white text-[12px] px-[6px] py-[2px] md:px-2 md:py-1 rounded-full">
+                {item.product_type}
+              </span>
+            )}
           </div>
-        </div>
-      )}
+
+          <div className="p-3">
+            <h3 className="text-sm md:text-base font-medium mb-1 truncate">
+              {item.name}
+            </h3>
+
+            <div className="text-sm md:text-base mb-2">
+              <span className="text-green-600 font-semibold mr-2">
+                <span className="text-black font-bold">৳</span> {item.regular_price}
+              </span>
+              {item.discount_price && (
+                <span className="line-through text-gray-400">
+                  ৳{item.discount_price}
+                </span>
+              )}
+            </div>
+
+            <Link
+              to={`/products-collection/details/${item.slug}`}
+              className="block text-center bg-teal-600 text-white text-sm py-1 rounded hover:bg-teal-700"
+            >
+              Order Now
+            </Link>
+          </div>
+        </motion.div>
+      ))}
+      
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };

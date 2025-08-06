@@ -32,10 +32,24 @@ export const CartProvider = ({ children }) => {
   };
   // LocalStorage Delete Card Products
   const clearCart = () => setCartItems([]);
+  // CartContext.jsx
+
+  const removeFromCart = (itemToRemove) => {
+    setCartItems((prev) =>
+      prev.filter(
+        (item) =>
+          !(
+            item.id === itemToRemove.id &&
+            item.selectedColor === itemToRemove.selectedColor &&
+            item.selectedSize === itemToRemove.selectedSize
+          )
+      )
+    );
+  };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, clearCart, setCartItems }}
+      value={{ cartItems, addToCart, clearCart, setCartItems, removeFromCart }}
     >
       {children}
     </CartContext.Provider>

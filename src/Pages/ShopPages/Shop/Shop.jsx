@@ -430,7 +430,7 @@ const ProductCard = ({ product }) => {
           {"★".repeat(rating) + "☆".repeat(5 - rating)}
         </div>
         <div className="mt-1 text-sm md:text-lg">
-          <span className="text-green-600 font-semibold mr-2"><span className="text-black">৳</span> {price}</span>
+          <span className="text-green-600 font-semibold mr-2"><span className="text-black font-bold">৳</span> {price}</span>
           {oldPrice && (
             <span className="line-through text-gray-400">৳{oldPrice}</span>
           )}
