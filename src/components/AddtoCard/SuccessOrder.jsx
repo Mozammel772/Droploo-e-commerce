@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { FaCheckCircle, FaHome, FaListAlt, FaShoppingBag } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
 const SuccessOrder = () => {
   const location = useLocation();
+  const [settings, setSettings] = useState(null);
   const { orderId, customerName, totalAmount } = location.state || {};
   const [dimensions, setDimensions] = React.useState({
     width: window.innerWidth,
@@ -26,6 +27,22 @@ const SuccessOrder = () => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+   useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch("https://backend.droploo.com/api/general-data");
+        const data = await response.json();
+        if (data.generalData) {
+          setSettings(data.generalData);
+        }
+      } catch (error) {
+        console.error("Error fetching logo:", error);
+      }
+    };
+
+    fetchSettings();
   }, []);
 
   return (
@@ -55,14 +72,16 @@ const SuccessOrder = () => {
           <FaCheckCircle className="text-6xl text-teal-500 drop-shadow-lg" />
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-3xl md:text-4xl font-bold text-teal-600 mb-2"
-        >
-          MART
-        </motion.h1>
+        {settings?.logo_url && (
+          <img
+            src={settings.logo_url}
+            alt="Company Logo"
+            className="h-12 mx-auto mb-6"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+        )}
 
         <motion.h2
           initial={{ opacity: 0 }}

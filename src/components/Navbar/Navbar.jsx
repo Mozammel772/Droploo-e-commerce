@@ -35,6 +35,7 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [subcategoryView, setSubcategoryView] = useState(false);
   const [currentCat, setCurrentCat] = useState(null);
+  const [settings, setSettings] = useState(null);
 
   // Updated cart functions from context
   const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } =
@@ -55,6 +56,24 @@ const Navbar = () => {
         }
       })
       .catch((err) => console.error("Error loading categories:", err));
+  }, []);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(
+          "https://backend.droploo.com/api/general-data"
+        );
+        const data = await response.json();
+        if (data.generalData) {
+          setSettings(data.generalData);
+        }
+      } catch (error) {
+        console.error("Error fetching logo:", error);
+      }
+    };
+
+    fetchSettings();
   }, []);
 
   const openSub = (cat) => {
@@ -97,7 +116,23 @@ const Navbar = () => {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2 text-xl font-bold text-teal-700">
-            <span className="hidden sm:block">MART</span>
+            <Link to="/" className="flex items-center">
+              {settings?.logo_url ? (
+                <img
+                  src={settings.logo_url}
+                  alt="Company Logo"
+                  className="h-10"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    // Fallback to text if image fails
+                    e.target.parentElement.innerHTML =
+                      '<span className="text-xl font-bold">Droploo</span>';
+                  }}
+                />
+              ) : (
+                <span className="text-xl font-bold">Droploo</span>
+              )}
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <button
