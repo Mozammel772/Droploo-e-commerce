@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -8,6 +9,8 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useCart } from "../../../Context/CartContext/CartContext";
 
 const PRODUCTS_PER_PAGE = 10;
 
@@ -400,6 +403,50 @@ const ProductCard = ({ product }) => {
   const price = product.discount_price || product.regular_price;
   const oldPrice = product.discount_price ? product.regular_price : null;
   const rating = Math.round(product.rating || 0);
+  const { cartItems, addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    const selectedColor = product.colors?.[0] || null;
+    const selectedSize = product.sizes?.[0] || null;
+
+    const isAlreadyInCart = cartItems.some(
+      (item) =>
+        item.id === product.id &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
+    );
+
+    if (!isAlreadyInCart) {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price,
+        quantity: 1,
+        selectedColor,
+        selectedSize,
+        imageUrl: product.imageUrl,
+      });
+      toast.success(`${product.name} কার্টে যোগ করা হয়েছে!`, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      toast.warning(`${product.name} ইতিমধ্যেই কার্টে আছে!`, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
 
   return (
     <motion.div
@@ -430,17 +477,19 @@ const ProductCard = ({ product }) => {
           {"★".repeat(rating) + "☆".repeat(5 - rating)}
         </div>
         <div className="mt-1 text-sm md:text-lg">
-          <span className="text-green-600 font-semibold mr-2"><span className="text-black font-bold">৳</span> {price}</span>
+          <span className="text-green-600 font-semibold mr-2">
+            <span className="text-black font-bold">৳</span> {price}
+          </span>
           {oldPrice && (
             <span className="line-through text-gray-400">৳{oldPrice}</span>
           )}
         </div>
-        <Link
-          to={`/checkout`}
-          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-0.5 md:py-1.5 rounded"
+        <button
+          onClick={handleAddToCart}
+          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-1 rounded transition-colors duration-200"
         >
-          Order Now
-        </Link>
+          Add To Card
+        </button>
       </div>
     </motion.div>
   );

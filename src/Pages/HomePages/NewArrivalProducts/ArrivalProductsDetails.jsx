@@ -141,7 +141,7 @@ import { FaArrowLeft, FaStar } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 
 const fetchProductBySlug = async (slug) => {
-  const res = await fetch(`https://backend.droploo.com/api/new-arrival/products/${slug}`);
+  const res = await fetch(`https://backend.droploo.com/api/new-arrival/products/list/${slug}`);
   
   if (!res.ok) throw new Error("Product not found");
   const data = await res.json();

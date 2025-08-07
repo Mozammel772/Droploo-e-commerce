@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import CartDetails from "../components/AddtoCard/CardDetails";
 import CheckoutPage from "../components/AddtoCard/CheckoutPage";
+import SuccessOrder from "../components/AddtoCard/SuccessOrder";
 import Error from "../components/ErrorPages/Error";
 import MainLayout from "../layout/MainLayout";
 import DiscountProducts from "../Pages/DiscountProductsPages/DiscountProducts";
@@ -50,12 +51,16 @@ export const routes = createBrowserRouter([
        element:<DiscountProducts/>
       },
       {
-        path: "cart-details",
+        path: "/cart-details",
         element: <CartDetails />,
       },
       {
-        path: "checkout",
+        path: "/checkout",
         element: <CheckoutPage />,
+      },
+      {
+        path: "/order-success",
+        element: <SuccessOrder />,
       },
     ],
   },
