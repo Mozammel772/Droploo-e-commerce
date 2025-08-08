@@ -1,79 +1,81 @@
 
-
-
-
-
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useCart } from "../../../Context/CartContext/CartContext";
 
 const fetchProducts = async () => {
-  const res = await fetch("https://backend.droploo.com/api/hot/products/list");
+  const res = await fetch(
+    "https://backend.droploo.com/api/hot/products/list"
+  );
   if (!res.ok) throw new Error("Failed to fetch products");
   const data = await res.json();
   return data.products || [];
 };
 
-const ArrivalProducts = () => {
-  const { 
-    data: products = [], 
-    isLoading, 
-    isError 
-  } = useQuery({
-    queryKey: ["allProducts"],
-    queryFn: fetchProducts,
-  });
-
-  return (
-    <div className="max-w-[1400px] mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 uppercase">New Arrival Products</h1>
-
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="flex flex-col gap-4 border rounded-md shadow p-3 animate-pulse">
-              <div className="skeleton h-52 w-full rounded"></div>
-              <div className="skeleton h-4 w-1/2"></div>
-              <div className="skeleton h-4 w-2/3"></div>
-              <div className="skeleton h-8 w-full rounded"></div>
-            </div>
-          ))}
-        </div>
-      ) : isError ? (
-        <p className="text-center text-red-500">Failed to load products.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((item) => (
-            <ProductCard key={item.id} product={item} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, addToCart, cartItems }) => {
   const price = product.discount_price || product.regular_price;
   const oldPrice = product.discount_price ? product.regular_price : null;
   const rating = Math.round(product.rating || 0);
-  const isNewArrival = rating >= 4.5;
 
-console.log("product data", product.slug)
+  const handleAddToCart = () => {
+    const selectedColor = product.colors?.[0] || null;
+    const selectedSize = product.sizes?.[0] || null;
+    
+    const isAlreadyInCart = cartItems.some(
+      (item) => 
+        item.id === product.id &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
+    );
+
+    if (!isAlreadyInCart) {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price,
+        quantity: 1,
+        selectedColor,
+        selectedSize,
+        imageUrl: product.imageUrl,
+      });
+      toast.success(`${product.name} কার্টে যোগ করা হয়েছে!`, {
+      position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      toast.warning(`${product.name} ইতিমধ্যেই কার্টে আছে!`, {
+       position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
   return (
-    <div className="bg-white border rounded-md shadow hover:shadow-2xl hover:border-teal-300 transition duration-200 overflow-hidden">
+    <div className="bg-white border border-gray-300 rounded-md shadow hover:shadow-2xl hover:border-teal-300 transition duration-200 overflow-hidden">
       <div className="relative">
-        <Link to={`/new-arrival/product/${product.slug}`}>
+        <Link to={`/new-hot/product/${product.slug}`}>
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="w-full h-52 object-cover cursor-pointer"
+            className="w-full h-28 md:h-52 object-cover cursor-pointer"
             onError={(e) => (e.target.src = "/images/fallback.jpg")}
           />
         </Link>
-        {isNewArrival && (
-          <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-            New
-          </span>
-        )}
+
+        <span className="absolute top-2 right-2 bg-orange-700 text-white text-[12px] px-[6px] py-[2px] md:px-2 md:py-1 rounded-full">
+          {product.product_type}
+        </span>
       </div>
       <div className="p-3">
         <h2 className="text-sm font-semibold text-gray-800 truncate">
@@ -88,15 +90,65 @@ console.log("product data", product.slug)
             <span className="line-through text-gray-400">৳{oldPrice}</span>
           )}
         </div>
-        <Link 
-          to={`/product/${product.slug}`}
-          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-1 rounded"
+        <button
+          onClick={handleAddToCart}
+          className="mt-2 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white py-1 rounded transition-colors duration-200"
         >
-          VIEW DETAILS
-        </Link>
+          Add To Cart
+        </button>
       </div>
     </div>
   );
 };
 
-export default ArrivalProducts;
+const HotProducts = () => {
+  const { addToCart, cartItems } = useCart();
+
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["allProducts"],
+    queryFn: fetchProducts,
+  });
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-6 uppercase">
+       Hot Products
+      </h1>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="flex flex-col gap-4 border rounded-md shadow p-3 animate-pulse"
+            >
+              <div className="skeleton h-52 w-full rounded"></div>
+              <div className="skeleton h-4 w-1/2"></div>
+              <div className="skeleton h-4 w-2/3"></div>
+              <div className="skeleton h-8 w-full rounded"></div>
+            </div>
+          ))}
+        </div>
+      ) : isError ? (
+        <p className="text-center text-red-500">Failed to load products.</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
+          {products.map((item) => (
+            <ProductCard 
+              key={item.id} 
+              product={item} 
+              addToCart={addToCart}
+              cartItems={cartItems}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default HotProducts;

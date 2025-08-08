@@ -11,7 +11,7 @@ import {
   FaSearch,
   FaShoppingCart,
   FaTimes,
-  FaTrash,
+  FaTrash
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useCart } from "../../Context/CartContext/CartContext";
@@ -45,7 +45,7 @@ const Navbar = () => {
 
   // Calculate total quantity
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-
+  const totalLength = cartItems.length;
   useEffect(() => {
     fetch("https://backend.droploo.com/api/categories")
       .then((res) => res.json())
@@ -135,12 +135,62 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <button
+            {/* <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="md:hidden p-2 rounded hover:bg-gray-200 cursor-pointer"
+              className=" p-2 rounded hover:bg-gray-200 cursor-pointer"
             >
               <FaSearch className="text-xl text-gray-600" />
+            </button> */}
+            
+ <div className="relative">
+    {/* মোবাইল/ট্যাবলেটে শুধু আইকন (md ব্রেকপয়েন্টের নিচে) */}
+    <button
+      onClick={() => setSearchOpen(!searchOpen)}
+      className="md:hidden p-2 rounded hover:bg-gray-200 cursor-pointer"
+    >
+      <FaSearch className="text-xl text-gray-600" />
+    </button>
+
+    {/* ডেস্কটপ/ট্যাবলেটে সম্পূর্ণ সার্চ বার (md ব্রেকপয়েন্টের উপরে) */}
+    <div className="hidden md:block">
+      <AnimatePresence>
+        {searchOpen ? (
+          <motion.div
+            initial={{ opacity: 0, width: 50 }}
+            animate={{ opacity: 1, width: 300 }}
+            exit={{ opacity: 0, width: 50 }}
+            className="flex items-center bg-white rounded-full shadow-md border border-gray-300 overflow-hidden"
+          >
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="py-2 px-4 w-full focus:outline-none"
+              autoFocus
+            />
+            <button
+              onClick={() => setSearchOpen(false)}
+              className="p-2 text-gray-500 hover:text-gray-700 pr-3"
+            >
+              <FaTimes />
             </button>
+          </motion.div>
+        ) : (
+          <motion.button
+            onClick={() => setSearchOpen(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-2 rounded-full hover:bg-gray-200 cursor-pointer"
+          >
+            <FaSearch className="text-xl text-gray-600" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
+  </div>
+
+
+
+            
             <div className="relative cursor-pointer">
               <button
                 onClick={() => setShowCart((prev) => !prev)}
@@ -148,9 +198,9 @@ const Navbar = () => {
                 aria-label="Cart"
               >
                 <FaShoppingCart size={24} />
-                {totalQuantity > 0 && (
+                {totalLength > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-600 rounded-full px-2 text-xs font-bold">
-                    {totalQuantity}
+                    {totalLength}
                   </span>
                 )}
               </button>
@@ -165,7 +215,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile search */}
-        {searchOpen && (
+        {/* {searchOpen && (
           <div className="block md:hidden px-4 mt-2 transition-all duration-300">
             <div className="flex">
               <input
@@ -173,15 +223,37 @@ const Navbar = () => {
                 placeholder="Search here..."
                 className="input input-bordered w-full rounded-l-md border-teal-400"
               />
-              <button
-                className="bg-teal-600 cursor-pointer text-white px-4 rounded-r-md hover:bg-teal-700"
-                onClick={() => setSearchOpen(false)}
-              >
-                Search
-              </button>
+              
             </div>
           </div>
-        )}
+        )} */}
+
+ <AnimatePresence>
+    {searchOpen && (
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        className="md:hidden absolute left-0 right-0 top-full bg-white shadow-md px-4 py-2 z-40"
+      >
+        <div className="flex items-center">
+          <input
+            type="text"
+            placeholder="Search here..."
+            className="input input-bordered w-full rounded-l-full border-teal-400 focus:outline-none"
+          />
+          <button
+            className="bg-teal-600 text-white px-4 rounded-r-full hover:bg-teal-700 py-3"
+            onClick={() => setSearchOpen(false)}
+          >
+            <FaSearch />
+          </button>
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+
       </div>
 
       {/* Cart Popup */}

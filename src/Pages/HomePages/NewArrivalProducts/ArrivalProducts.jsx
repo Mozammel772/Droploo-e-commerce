@@ -13,7 +13,7 @@ const fetchProducts = async () => {
   return data.products || [];
 };
 
-const ProductCard = ({ product, addToCart, cartItems }) => {
+const ArrivalProductCard = ({ product, addToCart, cartItems }) => {
   const price = product.discount_price || product.regular_price;
   const oldPrice = product.discount_price ? product.regular_price : null;
   const rating = Math.round(product.rating || 0);
@@ -138,7 +138,7 @@ const ArrivalProducts = () => {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {products.map((item) => (
-            <ProductCard 
+            <ArrivalProductCard 
               key={item.id} 
               product={item} 
               addToCart={addToCart}
